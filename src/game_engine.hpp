@@ -3,7 +3,7 @@
 #define GAME_ENGINE_H
 #include <vector>
 
-#include "game_state.h"
+#include "game_state.hpp"
 
 class GameEngine {
  private:
