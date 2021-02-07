@@ -13,11 +13,11 @@ class GameEngine {
   GameEngine() {}
 
   // Get the next state from current state (set terminal state also)
-  virtual void getNextStateAndReward(const GameState &state, int action,
+  virtual void getNextStateAndReward(const GameState *state, int action,
                                      GameState *nextState, double &reward) = 0;
 
   // state should be non terminal
-  virtual bool isValidAction(const GameState &state, int action) = 0;
+  virtual bool isValidAction(const GameState *state, int action) = 0;
 
   void setActionSet(const vector<int> &actionSet) { mActionSet = actionSet; }
 
@@ -29,12 +29,12 @@ class GameEngine {
 
   int getActionNum() { return mActionSet.size(); }
 
-  virtual void getValidActions(GameState *state, vector<int> &validAction) {
+  virtual void getValidActions(const GameState *state, vector<int> &validAction) {
     if (state->isTerminal()) {
       return;
     }
     for (int i = 0; i < mActionSet.size(); i++) {
-      if (isValidAction(*state, mActionSet[i])) {
+      if (isValidAction(state, mActionSet[i])) {
         validAction.push_back(mActionSet[i]);
       }
     }

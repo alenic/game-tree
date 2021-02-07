@@ -162,7 +162,7 @@ class BFS {
       for (int i = 0; i < validAction.size(); i++) {
         double reward;
         GameState *nextState;
-        gameEngine->getNextStateAndReward(*currentState, validAction[i],
+        gameEngine->getNextStateAndReward(currentState, validAction[i],
                                           nextState, reward);
         Node *nextNode = new Node();
         nextNode->setState(nextState);

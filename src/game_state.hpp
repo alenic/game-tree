@@ -18,18 +18,18 @@ class GameState {
     mValue = 0.0;
   }
 
-  // REMEMBER: Assign mTerminal, mValid and mValue
+  // REMEMBER: Assign mTerminal and mValue
   virtual GameState *clone() = 0;
 
   virtual ~GameState() {}
 
-  bool isTerminal() { return mTerminal; }
+  bool isTerminal() const { return mTerminal; }
 
   void setTerminal(bool v) { mTerminal = v; }
 
   void setValue(double v) { mValue = v; }
 
-  double getValue() { return mValue; }
+  double getValue() const { return mValue; }
 };
 
 #endif  // GAME_NODE_H
