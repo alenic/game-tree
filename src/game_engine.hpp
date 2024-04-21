@@ -12,7 +12,12 @@ class GameEngine {
  public:
   GameEngine() {}
 
-  // Get the next state from current state (set terminal state also)
+  /* 
+  Get the next state from state 
+  ! action should be a valid action (check)
+  ! set terminal state
+  ! set value for heuristics (0 otherwise)
+  */
   virtual void getNextStateAndReward(const GameState *state, int action,
                                      GameState *nextState, double &reward) = 0;
 
