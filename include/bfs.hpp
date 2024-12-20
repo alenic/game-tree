@@ -7,7 +7,7 @@
 #include <list>
 
 #include "game_engine.hpp"
-#include "game_state.hpp"
+
 #include "tree.hpp"
 
 class BFS {
@@ -106,7 +106,7 @@ class BFS {
         stopVisit = true;
       }
 
-      if (currentNode->getState()->isTerminal()) {
+      if (currentNode->getState()->done) {
         stopVisit = true;
       }
 
@@ -169,7 +169,7 @@ class BFS {
         nextNode->setParentNode(currentNode);
         nextNode->setParentAction(validAction[i]);
         nextNode->setLevel(currentNode->getLevel() + 1);
-        nextNode->setValue(nextState->getValue());
+        nextNode->setValue(reward);
         nextNodes.push_back(nextNode);
       }
 

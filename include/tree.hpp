@@ -1,7 +1,7 @@
 #ifndef TREE_H
 #define TREE_H
 
-#include "game_state.hpp"
+#include "game_engine.hpp"
 
 class Node {
  protected:

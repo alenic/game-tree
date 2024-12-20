@@ -58,17 +58,13 @@ public:
 
         // Check Win
         int winner = checkWin(((TTTState *)nextState)->board_player1, ((TTTState *)nextState)->board_player2);
-        nextState->setTerminal(false);
+
         if (winner) {
-            nextState->setTerminal(true);
             if(winner == 1) {
-                nextState->setValue(1);
                 reward = 1;
             }
                 
             if(winner == 2) {
-                nextState->setTerminal(true);
-                nextState->setValue(-1);
                 reward = -1;
             }
         }
@@ -105,11 +101,11 @@ public:
 
 class RandomAgent {
 public:
-    int getAction(TTTState *state, vector<int> &validActions) {
+    int getActionId(TTTState *state, vector<unsigned int> &validActionsIds) {
         // choose random action
-        int rand_idx = rand() % validActions.size();
-        int action = validActions[rand_idx];
-        return action;
+        int rand_idx = rand() % validActionsIds.size();
+        int actionId = validActionsIds[rand_idx];
+        return actionId;
     }
 };
 
@@ -132,15 +128,14 @@ int main() {
         state->board_player1 = 0;
         state->board_player2 = 0;
         state->player = 1;
-        state->setTerminal(false);
+        state->done = false;
         while(1) {
-            vector<int> validAction;
-            game.getValidActions(state, validAction);
+            vector<unsigned int> *validAction = game.getValidActionsIds(state);
             if(state->player == 1) {
-                action = agent1.getAction(state, validAction);
+                action = game.getActionFromId(agent1.getActionFromId(state));
             }
             if(state->player == 2) {
-                action = agent2.getAction(state, validAction);
+                action = agent2.getActionId(state, validAction);
             }
 
             if(debug) {
@@ -158,13 +153,13 @@ int main() {
             state->board_player1 = nextState->board_player1;
             state->board_player2 = nextState->board_player2;
             state->player = nextState->player;
-            state->setTerminal(nextState->isTerminal());
+            state->done = nextState->done;
             if(debug) {
-                if(state->isTerminal()) {
+                if(state->done) {
                     cerr << "Player wins " << reward << "!" << endl;
                 }
             }
-            if(state->isTerminal()) {
+            if(state->done) {
                 mean_reward += reward;
                 break;
             }
