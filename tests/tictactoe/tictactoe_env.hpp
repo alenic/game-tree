@@ -76,8 +76,17 @@ public:
     
     TTTState *nextTTTState = new TTTState();
     ((TTTGlobalState *)globalState)->board[((TTTAction *)action)->position] = tttState->currentPlayer;
-    nextTTTState->currentPlayer = 3 - tttState->currentPlayer; // 1 or 2
+    
+    int winner = checkWin(((TTTGlobalState *)globalState)->board);
+    if (winner != 0) {
+        done = true;
+        reward = (winner == tttState->currentPlayer) ? 1 : -1;
+    } else {
+        done = false;
+        reward = 0;
+    }
 
+    nextTTTState->currentPlayer = 3 - tttState->currentPlayer; // 1 or 2
   }
 
   // Called only if the global state is used

@@ -33,5 +33,9 @@
 
 .vscode
 
+
+*.bkp
+
+
 example
 build
