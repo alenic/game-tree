@@ -6,20 +6,22 @@
 #include <limits>
 #include <list>
 
-#include "game_engine.hpp"
+#include "game_environment.hpp"
+#include "node.hpp"
+#include "utils.hpp"
 
-#include "tree.hpp"
+namespace gametree {
 
 class BFS {
  public:
   double mMaxTime;
   double mCriticalTime;
-  int mMaxLevel;
+  unsigned int mMaxLevel;
   double mMaxValue;
   Node *mMaxValueNode;
   Node *mRootNode;
-  int mBeamK;
-  int mBeamLevel;
+  unsigned int mBeamK;
+  unsigned int mBeamLevel;
   chrono::high_resolution_clock::time_point mStartTime;
 
   BFS() {
@@ -44,11 +46,11 @@ class BFS {
     mStartTime = startTime;
   }
 
-  Node *formNode(GameState *rootState, bool copyRootState) {
+  Node *formNode(State *rootState, bool copyRootState) {
     Node *node = new Node();
     // To prevent rootState erasing
     if (copyRootState) {
-      GameState *rootStateCopy = rootState->clone();
+      State *rootStateCopy = rootState->clone();
       node->setState(rootStateCopy);
     } else {
       node->setState(rootState);
@@ -60,7 +62,7 @@ class BFS {
     return node;
   }
 
-  list<int> run(GameState *rootState, GameEngine *gameEngine,
+  list<int> run(State *rootState, GameEngine *gameEngine,
                 bool copyRootState) {
     Node *rootNode = formNode(rootState, copyRootState);
     return run(rootNode, gameEngine);
@@ -145,7 +147,7 @@ class BFS {
       }
 
       // Expand node
-      GameState *currentState = currentNode->getState();
+      State *currentState = currentNode->getState();
       validAction.clear();
       gameEngine->getValidActions(currentState, validAction);
 
@@ -161,7 +163,7 @@ class BFS {
       nextNodes.clear();
       for (int i = 0; i < validAction.size(); i++) {
         double reward;
-        GameState *nextState;
+        State *nextState;
         gameEngine->getNextStateAndReward(currentState, validAction[i],
                                           nextState, reward);
         Node *nextNode = new Node();
@@ -203,5 +205,7 @@ class BFS {
     return bestActionTrace;
   }
 };
+
+}  // namespace gametree
 
 #endif

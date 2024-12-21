@@ -6,113 +6,123 @@
 
 using namespace std;
 
-namespace gametree {
+namespace gametree
+{
 
-// =============================== Game State ==========================
-class GlobalState {
+  // =============================== Game State ==========================
+  class GlobalState
+  {
   public:
     // Default destructor
     virtual ~GlobalState() {}
 
     // Print shared state
-    friend ostream &operator<<(ostream &ostr, const GlobalState &state) {
+    friend ostream &operator<<(ostream &ostr, const GlobalState &state)
+    {
       state.print(ostr);
       return ostr;
     }
 
   protected:
     // Override the print function to customize your shared state string
-    virtual void print(ostream &ostr) const {
+    virtual void print(ostream &ostr) const
+    {
       ostr << this;
     }
-};
+  };
 
-class State {
+  class State
+  {
   public:
     // Default destructor
     virtual ~State() {}
 
     // Print state
-    friend ostream &operator<<(ostream &ostr, const State &state) {
+    friend ostream &operator<<(ostream &ostr, const State &state)
+    {
       state.print(ostr);
       return ostr;
     }
 
   protected:
     // Override the print function to customize your state string
-    virtual void print(ostream &ostr) const {
+    virtual void print(ostream &ostr) const
+    {
       ostr << this;
     }
-};
+  };
 
-
-// =============================== Game Action ==========================
-class Action {
+  // =============================== Game Action ==========================
+  class Action
+  {
   public:
     // Default destructor
     virtual ~Action() {}
 
     // Print action
-    friend ostream &operator<<(ostream &ostr, const Action &action) {
+    friend ostream &operator<<(ostream &ostr, const Action &action)
+    {
       action.print(ostr);
       return ostr;
     }
 
   protected:
     // Override the print function to customize your action string
-    virtual void print(ostream &ostr) const {
+    virtual void print(ostream &ostr) const
+    {
       ostr << this;
     }
-};
+  };
 
-class ActionSpace {
+  class ActionSpace
+  {
   public:
+    ActionSpace() {}
 
-  ActionSpace() {}
+    ActionSpace(vector<Action *> actionMap)
+    {
+      this->actionMap = actionMap;
+    }
 
-  ActionSpace(vector<Action *> actionMap) {
-    this->actionMap = actionMap;
-  }
+    void addAction(Action *action)
+    {
+      actionMap.push_back(action);
+    }
 
-  void addAction(Action *action) {
-    actionMap.push_back(action);
-  }
-
-  Action *getAction(unsigned int actionId) {
-    return actionMap[actionId];
-  }
+    Action *getAction(unsigned int actionId)
+    {
+      return actionMap[actionId];
+    }
 
   protected:
     vector<Action *> actionMap;
-};
+  };
 
+  // =============================== Game Environment ==========================
+  struct GameEnvironment
+  {
+    GameEnvironment() {}
 
-// =============================== Game Environment ==========================
-struct GameEnvironment {
-  GameEnvironment() {}
+    // Define the transition function
+    virtual State *transitionFunction(const State *state,       // state input
+                                      const Action *action,     // action input
+                                      GlobalState *globalState, // shared state input/output (update globally)
+                                      double &reward,           // reward output
+                                      bool &done                // true if the game ended
+                                      ) = 0;
 
-  // Define the transition function
-  virtual State * transitionFunction(const State *state,      // state input
-                                  const Action *action,       // action input
-                                  GlobalState *globalState,   // shared state input/output (update globally)
-                                  double &reward,             // reward output
-                                  bool &done                  // true if the game ended
-                                  ) = 0;
+    // Called only if a shared state is used
+    virtual void restoreGlobalState(const State *state,
+                                    const Action *choosedAction,
+                                    const State *nextState,
+                                    GlobalState *globalState) {};
 
-  // Called only if a shared state is used
-  virtual void restoreGlobalState(const State *state,
-                                  const Action *choosedAction,
-                                  const State *nextState,
-                                  GlobalState *globalState
-                                  ) {};
+    // Gett all valid actions from a state
+    virtual vector<unsigned int> *getValidActionsIds(const GlobalState *globalState,
+                                                     const State *state,
+                                                     const ActionSpace *actionSpace) = 0;
+  };
 
-  // Gett all valid actions from a state
-  virtual vector<unsigned int> *getValidActionsIds(const GlobalState *globalState,
-                                                   const State *state,
-                                                   const ActionSpace *actionSpace
-                                                   ) = 0;
-};
+}; // namespace gametree
 
-};  // namespace gametree
-
-#endif  // GAME_ENGINE_H
+#endif // GAME_ENGINE_H

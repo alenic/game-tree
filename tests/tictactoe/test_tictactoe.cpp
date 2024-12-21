@@ -1,13 +1,14 @@
 #include "tictactoe_env.hpp"
 
-
-int main() {
+int main()
+{
 
     TTTEnvironment *env = new TTTEnvironment();
     ActionSpace actionSpace = ActionSpace();
-    bool done=false;
-    
-    for (int i = 0; i < 9; i++) {
+    bool done = false;
+
+    for (int i = 0; i < 9; i++)
+    {
         actionSpace.addAction(new TTTAction(i));
     }
 
@@ -19,19 +20,19 @@ int main() {
     cout << "Initial state: " << *state << endl;
     cout << *globalState << endl;
 
-
-    while(!done) {
+    while (!done)
+    {
         vector<unsigned int> *validActions = env->getValidActionsIds(globalState, state, &actionSpace);
-        
-        for(int i=0; i<validActions->size(); i++) {
+
+        for (int i = 0; i < validActions->size(); i++)
+        {
             cout << "Valid action: " << validActions->at(i) << endl;
         }
 
         int actionId = rand() % validActions->size();
         action = (TTTAction *)actionSpace.getAction(validActions->at(actionId));
         cout << "Action: " << *action << endl;
-        
-        
+
         double reward;
         nextState = dynamic_cast<TTTState *>(env->transitionFunction(state, action, globalState, reward, done));
         cout << "Next state: " << *nextState << endl;
@@ -39,7 +40,7 @@ int main() {
 
         delete state;
         state = nextState;
-        
+
         delete validActions;
     }
     delete env;
