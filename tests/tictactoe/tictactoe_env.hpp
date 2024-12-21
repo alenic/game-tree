@@ -11,6 +11,16 @@ class TTTGlobalState : public GlobalState {
             board[i] = 0;
         }
     }
+
+    void print(ostream &ostr) const {
+        for (int i = 0; i < 9; i++) {
+            if (i % 3 == 0) {
+                ostr << endl;
+            }
+            ostr << board[i] << " ";
+        }
+        ostr << endl;
+    }
 };
 
 
@@ -21,6 +31,17 @@ class TTTState : public State {
     TTTState() {
         currentPlayer = 1;
     }
+
+    void setCurrentPlayer(int currentPlayer) {
+        this->currentPlayer = currentPlayer;
+    }
+
+    void print(ostream &ostr) const {
+        ostr << "Current player: " << currentPlayer;
+    }
+
+  ~TTTState() {}
+
 };
 
 class TTTAction : public Action {
@@ -30,6 +51,11 @@ class TTTAction : public Action {
     TTTAction(int position) {
         this->position = position;
     }
+
+    void print(ostream &ostr) const {
+        ostr << position << endl;
+    }
+
 };
 
 
@@ -64,29 +90,30 @@ public:
   }
 
   // Define the transition function
-  virtual void transitionFunction(const State *state,         // state input
+  virtual State * transitionFunction(const State *state,         // state input
                                   const Action *action,       // action input
                                   GlobalState *globalState,   // shared state input/output (update globally)
-                                  State *nextState,           // nrext state output
                                   double &reward,             // reward output
                                   bool &done                  // true if the game ended
                                   ) 
   {
-    const TTTState *tttState = dynamic_cast<const TTTState *>(state);
+    int currentPlayer = ((TTTState*)state)->currentPlayer;
     
-    TTTState *nextTTTState = new TTTState();
-    ((TTTGlobalState *)globalState)->board[((TTTAction *)action)->position] = tttState->currentPlayer;
+    TTTState *nextState = new TTTState();
+    ((TTTGlobalState *)globalState)->board[((TTTAction *)action)->position] = currentPlayer;
     
     int winner = checkWin(((TTTGlobalState *)globalState)->board);
     if (winner != 0) {
         done = true;
-        reward = (winner == tttState->currentPlayer) ? 1 : -1;
+        reward = (winner == currentPlayer) ? 1 : -1;
     } else {
         done = false;
         reward = 0;
     }
 
-    nextTTTState->currentPlayer = 3 - tttState->currentPlayer; // 1 or 2
+    nextState->setCurrentPlayer(3 - currentPlayer); // 1 or 2
+
+    return nextState;
   }
 
   // Called only if the global state is used

@@ -15,14 +15,14 @@ class GlobalState {
     virtual ~GlobalState() {}
 
     // Print shared state
-    friend ostream &operator<<(ostream &ostr, GlobalState &state) {
+    friend ostream &operator<<(ostream &ostr, const GlobalState &state) {
       state.print(ostr);
       return ostr;
     }
 
   protected:
     // Override the print function to customize your shared state string
-    virtual void print(ostream &ostr) {
+    virtual void print(ostream &ostr) const {
       ostr << this;
     }
 };
@@ -33,14 +33,14 @@ class State {
     virtual ~State() {}
 
     // Print state
-    friend ostream &operator<<(ostream &ostr, State &state) {
+    friend ostream &operator<<(ostream &ostr, const State &state) {
       state.print(ostr);
       return ostr;
     }
 
   protected:
     // Override the print function to customize your state string
-    virtual void print(ostream &ostr) {
+    virtual void print(ostream &ostr) const {
       ostr << this;
     }
 };
@@ -53,14 +53,14 @@ class Action {
     virtual ~Action() {}
 
     // Print action
-    friend ostream &operator<<(ostream &ostr, Action &action) {
+    friend ostream &operator<<(ostream &ostr, const Action &action) {
       action.print(ostr);
       return ostr;
     }
 
   protected:
     // Override the print function to customize your action string
-    virtual void print(ostream &ostr) {
+    virtual void print(ostream &ostr) const {
       ostr << this;
     }
 };
@@ -92,10 +92,9 @@ struct GameEnvironment {
   GameEnvironment() {}
 
   // Define the transition function
-  virtual void transitionFunction(const State *state,         // state input
+  virtual State * transitionFunction(const State *state,      // state input
                                   const Action *action,       // action input
                                   GlobalState *globalState,   // shared state input/output (update globally)
-                                  State *nextState,           // nrext state output
                                   double &reward,             // reward output
                                   bool &done                  // true if the game ended
                                   ) = 0;
